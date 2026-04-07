@@ -148,6 +148,11 @@ const app = express();
 //     console.log('✅ Database connected');
 //   }
 // });
+if (process.env.NODE_ENV !== 'production') {
+  testConnection().then((connected) => {
+    console.log("DB status:", connected);
+  }).catch(console.error);
+}
 
 // Global Middleware
 app.use(helmet());
