@@ -1,8 +1,34 @@
+// {
+//   "compilerOptions": {
+//     "target": "ES2022",
+//     "module": "ESNext",
+//     "moduleResolution": "bundler",
+//     "outDir": "./dist",
+//     "rootDir": "./src",
+//     "strict": true,
+//     "esModuleInterop": true,
+//     "skipLibCheck": true,
+//     "forceConsistentCasingInFileNames": true,
+//     "resolveJsonModule": true,
+//     "declaration": true,
+//     "declarationMap": true,
+//     "sourceMap": true,
+//     "baseUrl": ".",
+//     "allowImportingTsExtensions":true,
+//     "paths": {
+//       "@/*": ["src/*"]
+//     }
+//   },
+//   "include": ["src/**/*"],
+//   "exclude": ["node_modules", "dist", "tests"]
+// }
+
+
 {
   "compilerOptions": {
     "target": "ES2022",
     "module": "ESNext",
-    "moduleResolution": "bundler",
+    "moduleResolution": "node16",           // Changed from "bundler"
     "outDir": "./dist",
     "rootDir": "./src",
     "strict": true,
@@ -10,14 +36,14 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
-    "declaration": true,
-    "declarationMap": true,
+    "declaration": false,                   // Not needed for serverless
+    "declarationMap": false,
     "sourceMap": true,
     "baseUrl": ".",
-    "allowImportingTsExtensions":true,
     "paths": {
       "@/*": ["src/*"]
-    }
+    },
+    "allowImportingTsExtensions": false     // Must be false when emitting JS
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "tests"]
