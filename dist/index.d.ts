@@ -1,3 +1,3 @@
-import { Request, Response } from "express";
-export default function handler(req: Request, res: Response): any;
+import app from './server';
+export default app;
 //# sourceMappingURL=index.d.ts.map
