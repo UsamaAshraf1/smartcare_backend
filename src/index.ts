@@ -1,4 +1,4 @@
 import express from 'express';
-import app from './server';   // ← add .js extension (important for ESM!)
+import app from './server.ts';
 
-export default app;   // or the express app directly
+export default app;
