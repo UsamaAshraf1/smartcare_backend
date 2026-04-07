@@ -155,7 +155,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 // Global Middleware
-app.use(helmet());
+// app.use(helmet());
 
 const defaultDevOrigins = ['http://localhost:3000', 'http://localhost:5173'];
 const envOrigins = (process.env.CORS_ORIGIN || '')

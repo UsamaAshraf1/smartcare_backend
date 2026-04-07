@@ -94,7 +94,6 @@
 // export default app;
 import express from 'express';
 import cors from 'cors';
-import helmet from 'helmet';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
 import { testConnection } from './config/database.js';
@@ -130,7 +129,7 @@ if (process.env.NODE_ENV !== 'production') {
     }).catch(console.error);
 }
 // Global Middleware
-app.use(helmet());
+// app.use(helmet());
 const defaultDevOrigins = ['http://localhost:3000', 'http://localhost:5173'];
 const envOrigins = (process.env.CORS_ORIGIN || '')
     .split(',')
