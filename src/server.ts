@@ -141,13 +141,13 @@ dotenv.config();
 const app = express();
 
 // ✅ Run DB check once (no server start)
-testConnection().then((connected) => {
-  if (!connected) {
-    console.warn('Database not connected');
-  } else {
-    console.log('✅ Database connected');
-  }
-});
+// testConnection().then((connected) => {
+//   if (!connected) {
+//     console.warn('Database not connected');
+//   } else {
+//     console.log('✅ Database connected');
+//   }
+// });
 
 // Global Middleware
 app.use(helmet());
