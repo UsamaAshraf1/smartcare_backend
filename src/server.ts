@@ -1,6 +1,6 @@
 ﻿import express from "express";
 import cors from "cors";
-import helmet from "helmet";
+// import helmet from "helmet";
 import morgan from "morgan";
 import dotenv from "dotenv";
 import { createServer } from "http";
@@ -33,7 +33,7 @@ const PORT = process.env.PORT || 4000;
 // ======================
 // Global Middleware
 // ======================
-app.use(helmet());
+// app.use(helmet());
 
 const defaultDevOrigins = ["http://localhost:3000", "http://localhost:5173"];
 const envOrigins = (process.env.CORS_ORIGIN || "")
