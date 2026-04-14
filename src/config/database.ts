@@ -34,39 +34,81 @@
 
 // config/database.ts
 // config/database.ts
-
 import { Pool } from 'pg';
 import fs from 'fs';
 import path from 'path';
 import dotenv from 'dotenv';
+import https from 'https';
 
 dotenv.config();
 
-// === CHANGE THIS PART ===
-const caPath = path.resolve('C:\\Users\\DELL\\rds-ca-bundle.pem');   // ← Full absolute path
+// === BEST SOLUTION: Download CA bundle at runtime (No local file needed) ===
+const getRdsCaBundle = (): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const url = 'https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem';
 
-// If you're on Windows, use double backslashes or forward slashes like this:
-// const caPath = 'C:/Users/Usama/Downloads/rds-ca-bundle.pem';
+    https.get(url, (res) => {
+      if (res.statusCode !== 200) {
+        reject(new Error(`Failed to download CA bundle: ${res.statusCode}`));
+        return;
+      }
 
-export const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false,
-    ca: fs.readFileSync(caPath).toString(),
-  },
-});
+      let data = '';
+      res.on('data', (chunk) => { data += chunk; });
+      res.on('end', () => resolve(data));
+    }).on('error', (err) => {
+      reject(err);
+    });
+  });
+};
+
+// Initialize pool with lazy CA loading
+let pool: Pool;
+
+const initializePool = async () => {
+  try {
+    const ca = await getRdsCaBundle();
+
+    pool = new Pool({
+      connectionString: process.env.DATABASE_URL,
+      ssl: {
+        rejectUnauthorized: true,        // Keep this true in production
+        ca: ca,
+      },
+      // Optional: Good settings for serverless
+      max: 10,
+      idleTimeoutMillis: 30000,
+      connectionTimeoutMillis: 10000,
+    });
+
+    console.log('✅ PostgreSQL Pool initialized with RDS CA bundle');
+  } catch (error) {
+    console.error('❌ Failed to download RDS CA bundle:', error);
+    
+    // Fallback: Use rejectUnauthorized: false (less secure but works)
+    pool = new Pool({
+      connectionString: process.env.DATABASE_URL,
+      ssl: {
+        rejectUnauthorized: false,
+      },
+    });
+    console.warn('⚠️  Using fallback SSL (rejectUnauthorized: false)');
+  }
+};
+
+// Initialize immediately when this module is imported
+initializePool().catch(console.error);
+
+export { pool };
 
 export const testConnection = async (): Promise<boolean> => {
   try {
     const client = await pool.connect();
-    console.log('✅ PostgreSQL connected successfully (RDS with CA)');
+    console.log('✅ PostgreSQL connected successfully to RDS');
     client.release();
     return true;
   } catch (error: any) {
     console.error('❌ Database connection failed:', error.message);
-    if (error.code === 'ENOENT') {
-      console.error('   → PEM file not found at path:', caPath);
-    }
     return false;
   }
 };
