@@ -101,7 +101,7 @@ async function seed() {
         AND NOT EXISTS (
           SELECT 1
           FROM appointments a
-          WHERE a.slot_id = ds.i
+          WHERE a.slot_id = ds.id
         );
     `, [doctorIds]);
         for (let dayOffset = 0; dayOffset < 7; dayOffset++) {
